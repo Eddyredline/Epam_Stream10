@@ -1,0 +1,41 @@
+#1. Создайте плэйбук, выполняющий установку веб-сервера Apache на управляемом хосте со следующими требованиями:
+#- установка пакета httpd;
+#- включение службы веб-сервера и проверка, что он запущен;
+#- создание файла /var/www/html/index.html с текстом “Welcome to my web server”;
+#- используйте модуль firewalld для того, чтобы открыть необходимые для работы веб-сервера порты брендмауэра;
+
+---
+ - name: Install_Apache_and_Creating_Web_Page
+   hosts: all
+   become: yes
+   
+   tasks:
+   - name: Install_Apache_Web_Server
+     yum: name=httpd state=present
+
+   - name: Start WebServer and make ot enable on boot
+     service: name=httpd state=started enabled=yes
+
+   - name: Ensure_Apache_Is_Running
+     service:
+       name: httpd
+       state: started     
+
+   - name: Create_index.html
+     copy:
+       content: "Welcome to my web server"
+       dest: /var/www/html/index.html
+
+   - name: Open_80_Port
+     firewalld:
+       service: http
+       permanent: yes
+       state: enabled
+
+   - name: Open_443_Port
+     firewalld:
+       service: https
+       permanent: yes
+       state: enabled
+...
+ 
