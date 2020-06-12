@@ -1,1 +1,23 @@
 ---
+ - name: Grub_Updater
+   hosts: all
+   become: yes
+
+   tasks:
+   - name: Stop_NetworkManager
+     service:
+       name: NetworkManager
+       state: stopped
+
+   - name: Grub_Update
+     lineinfile: #Похоже этот модель не идемпотентен.
+       path: /etc/default/grub
+       regexp: '(^GRUB_CMDLINE_LINUX=\".*)(\")'
+       line: '\1 net.ifnames=0 biosdevname=0\2'
+       backrefs: yes
+       backup: yes
+   
+   - name: Run_grub2-mkconfig
+     shell:
+       cmd: grub2-mkconfig
+...
