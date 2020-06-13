@@ -1,0 +1,77 @@
+#3. 
+#Напишите плэйбук, который устанавливает и включает FTP (пакет vsftpd), открывает необходимые порты.
+#Определите в переменных необходимые параметры конфигурации ftp-сервера и используйте их в j2-шаблоне для конфига vsftpd.conf:
+#    - разрешен анонимный доступ и аплоад файлов
+#    - /var/ftp/pub - настроены необходимые разрешения и соответствующий SELinux контекст
+#    - SELinux "ftpd_anon_write" boolean - значение "on" (edited) 
+
+
+---
+ - name: Iistall_vsftpd
+   hosts: node2.example.com
+   become: yes
+
+   vars:
+    vsftpd: "vsftpd"
+    
+   
+   tasks:
+
+   - name: Install_Packages
+     yum:
+       name: 
+         - vsftpd
+         - libsemanage-python # 'Эта библиотека нужна для модуля seboolean'
+       state: latest
+
+   - name: Change_Config
+     template:
+       src:  ./vsftpd_conf.j2
+       dest: /etc/vsftpd/vsftpd.conf
+     notify:
+       - Restart_ftp
+
+   - name: Start_ftp_Service
+     service:
+       name: vsftpd
+       enabled: yes
+       state: started
+
+   - name: Open_Ports
+     firewalld:
+       service: ftp
+       permanent: true
+       state: enabled
+     notify:
+       - Restart_Firewall
+
+   - name: Change_Pub_Dir_Own
+     file:
+       path: /var/ftp/pub
+       owner: ansible
+       group: ansible
+       state: directory
+       mode: 0777
+
+   - name: Config_SELinux
+     seboolean:
+       state: yes
+       name: ftpd_anon_write
+     with_items: 
+       - allow_ftpd_anon_write
+       - allow_ftpd_full_access
+     notify:
+       - Restart_ftp
+
+
+   handlers:
+     - name: Restart_Firewall
+       service:
+         name: firewalld
+         state: restarted
+     
+     - name: Restart_ftp
+       service:
+         name: vsftpd
+         state: restarted     
+...

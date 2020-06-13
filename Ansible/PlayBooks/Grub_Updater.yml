@@ -10,12 +10,11 @@
        state: stopped
 
    - name: Grub_Update
-     lineinfile: #Похоже этот модель не идемпотентен.
+     lineinfile: #Похоже этот модуль не идемпотентен.
        path: /etc/default/grub
        regexp: '(^GRUB_CMDLINE_LINUX=\".*)(\")'
        line: '\1 net.ifnames=0 biosdevname=0\2'
        backrefs: yes
-       backup: yes
    
    - name: Run_grub2-mkconfig
      shell:

@@ -1,0 +1,41 @@
+#1. Создайте плэйбук uninstall-httpd.yml, который
+# - удалит httpd с управляемых хостов,
+# - удалит файл /var/www/html/index.html
+# - закроет на фаерволе порты, используемые веб-сервером.
+
+---
+ - name: Unistall_Apache
+   hosts: all
+   become: yes
+   
+   tasks:
+
+   - name: Stop_WebServer
+     service: name=httpd state=stopped 
+
+   - name: Uninstall_Apache_Web_Server
+     yum: name=httpd state=absent
+
+   - name: Delete_index.html
+     file:
+       dest: /var/www/html/index.html
+       state: absent
+
+   - name: Close_80_Port
+     firewalld:
+       service: http
+       permanent: yes
+       state: disabled
+
+   - name: Close_443_Port
+     firewalld:
+       service: https
+       permanent: yes
+       state: disabled
+
+   - name: reload service firewalld
+     systemd:
+       name: firewalld
+       state: reloaded       
+...
+ 

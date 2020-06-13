@@ -1,0 +1,22 @@
+#2. На одной из управляемых нод создайте файл /tmp/database и напишите плэйбук,
+#   который будет устанавливать mariadb-server, если такой файл существует.
+
+---
+ - name: Install_MariaDB
+   hosts: node1.example.com
+   become: yes
+   
+   tasks:
+
+   - name: Check_If_File_Exists
+     stat:
+       path: /tmp/database
+     register: db
+
+   - name: Install_MariaDB
+     yum:
+       name: mariadb-server
+       state: present
+     when: db.stat.exists == True
+
+...
