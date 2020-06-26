@@ -1,0 +1,1 @@
+ansible all -m uri -a "url=http://node1.example.com return_content=yes"
