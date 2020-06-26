@@ -1,0 +1,9 @@
+  
+---
+- name: Install_Apache_Vhost
+  hosts: lamp
+  become: yes
+
+  roles:
+    - Apache_vhost
+...

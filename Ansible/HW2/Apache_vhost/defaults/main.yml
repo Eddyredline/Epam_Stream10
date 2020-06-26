@@ -1,0 +1,4 @@
+---
+# defaults file for Apache_vhost
+destin_folder: /var/www/html
+conf_path: /etc/httpd/conf.d

@@ -1,0 +1,35 @@
+---
+# tasks file for install_vhost
+- block:
+  - name: Install_Apache_Web_Server
+    yum: name=httpd state=latest
+
+  - name: Create_config
+    template:
+      src: example.com.conf.j2
+      dest: "{{  conf_path  }}/example.com.conf"
+      mode: 0755
+
+  - name: Create_index.html
+    template:
+      src: index.j2
+      dest: "{{  destin_folder  }}/index.html"
+      mode: 0777
+    notify: Restart_apache
+
+  - name: Start_WebServer_and_make_it_enable_on_boot
+    service: name=httpd state=started enabled=yes
+
+  - name: Open_80_Port
+    firewalld:
+      service: http
+      permanent: yes
+      state: enabled
+
+  - name: Open_443_Port
+    firewalld:
+      service: https
+      permanent: yes
+      state: enabled
+
+  when: ansible_os_family == "RedHat"

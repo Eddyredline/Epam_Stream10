@@ -1,0 +1,7 @@
+<VirtualHost {{  ansible_default_ipv4.address  }}:80>
+  ServerAdmin webmaster@{{ansible_hostname}}
+  DocumentRoot "/var/www/html"
+  ServerName {{ansible_hostname}}
+  ErrorLog "logs/{{ansible_hostname}}-error_log"
+  TransferLog "logs/{{ansible_hostname}}-access_log"
+</VirtualHost>
