@@ -1,4 +1,8 @@
 ---
+- name: Import_hw-copy-facts
+  import_playbook: hw-copy-facts.yml # подключаем список пакетов, 
+            #ansible пишет, что следует использовать import вместо include
+
 - hosts: all
   vars: 
     firewall: firewalld

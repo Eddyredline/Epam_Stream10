@@ -10,6 +10,7 @@
         state: directory
         recurse: yes
         path: "{{ remote_dir }}"
+        
     - name: install new facts
       copy:
         src: "{{ facts_file }}"
